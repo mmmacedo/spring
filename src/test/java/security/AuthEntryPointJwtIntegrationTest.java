@@ -14,12 +14,14 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Transactional
 @SpringBootTest(classes = MainApplication.class)
 @AutoConfigureMockMvc
 public class AuthEntryPointJwtIntegrationTest {

@@ -16,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = MainApplication.class)
+@Transactional
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
@@ -112,7 +114,6 @@ public class AuthControllerIntegrationTest {
                 .password("testpass3")
                 .role(Set.of("user"))
                 .build();
-
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)

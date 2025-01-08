@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = MainApplication.class)
+@Transactional
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
@@ -38,7 +40,6 @@ public class AuthTokenFilterIntegrationTest {
     private static String userToken;
     private static String modToken;
     private static String adminToken;
-
 
     @BeforeAll
     public static void setup(@Autowired MockMvc mockMvc, @Autowired ObjectMapper objectMapper) throws Exception {

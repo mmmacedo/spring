@@ -59,6 +59,9 @@ class WebSecurityConfigTest {
     @Autowired
     private WebSecurityConfig webSecurityConfig;
 
+    @Autowired
+    private AuthTokenFilter authenticationJwtTokenFilter;
+
     @Mock
     private AuthenticationConfiguration authConfig;
 
@@ -132,7 +135,7 @@ class WebSecurityConfigTest {
 
     @Test
     void testAuthenticationJwtTokenFilter() {
-        AuthTokenFilter tokenFilter = webSecurityConfig.authenticationJwtTokenFilter();
+        AuthTokenFilter tokenFilter = authenticationJwtTokenFilter;
         assertNotNull(tokenFilter, "authenticationJwtTokenFilter should not be null");
     }
 
