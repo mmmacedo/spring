@@ -1,6 +1,5 @@
 package com.spring.services;
 
-import com.spring.repositories.RoleRepository;
 import com.spring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,9 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
 
     @Override
     @Transactional

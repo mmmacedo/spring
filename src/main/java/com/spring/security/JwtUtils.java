@@ -4,7 +4,9 @@ import java.security.Key;
 import java.util.Date;
 
 import com.spring.entities.User;
+import com.spring.exceptions.JwtValidationException;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -50,20 +52,12 @@ public class JwtUtils {
                .parseClaimsJws(token).getBody().getSubject();
   }
 
-  public boolean validateJwtToken(String authToken) {
+  public void validateJwtToken(String authToken) {
     try {
-      Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
-      return true;
-    } catch (MalformedJwtException e) {
-      logger.error("Invalid JWT token: {}", e.getMessage());
-    } catch (ExpiredJwtException e) {
-      logger.error("JWT token is expired: {}", e.getMessage());
-    } catch (UnsupportedJwtException e) {
-      logger.error("JWT token is unsupported: {}", e.getMessage());
-    } catch (IllegalArgumentException e) {
-      logger.error("JWT claims string is empty: {}", e.getMessage());
+      Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(authToken);
+    } catch (JwtException e) {
+      logger.error("Invalid JWT token: ", e);
+      throw new JwtValidationException("Invalid JWT token", e); // Throwing custom exception
     }
-
-    return false;
   }
 }

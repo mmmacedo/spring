@@ -1,12 +1,15 @@
 package com.spring.payload.request;
 
-import java.util.Set;
-
-import jakarta.validation.constraints.*;
+import com.spring.entities.ERole;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Collections;
+import java.util.Set;
 
 @Builder
 @NoArgsConstructor
@@ -14,14 +17,15 @@ import lombok.NoArgsConstructor;
 @Data
 public class SignupRequest {
 
-  @NotBlank
-  @Size(min = 3, max = 20)
-  private String username;
+    @NotBlank
+    @Size(min = 3, max = 20)
+    private String username;
 
-  private Set<String> role;
+    @Builder.Default
+    private Set<String> role = Collections.singleton(ERole.ROLE_USER.name());
 
-  @NotBlank
-  @Size(min = 6, max = 40)
-  private String password;
+    @NotBlank
+    @Size(min = 6, max = 40)
+    private String password;
 
 }
