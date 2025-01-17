@@ -10,7 +10,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,10 +29,8 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = MainApplication.class)
 @Transactional
@@ -57,23 +54,18 @@ public class JwtUtilsIntegrationTest {
     @Value("${spring.app.jwtSecret}")
     private String jwtSecret;
 
-    @BeforeAll
-    public static void setup(@Autowired RegisterUserService registerUserService) {
-        registerUserService.registerNewUser("testuser", "testuser");
-    }
+    String adminUsername = "root";
 
     @Test
     public void testGenerateAndValidateJwtToken() {
-        registerUserService.registerNewUser("testuser", "testuser");
-
-        User userDetails = (User) UserService.loadUserByUsername("testuser");
+        User userDetails = (User) UserService.loadUserByUsername(adminUsername);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         String token = jwtUtils.generateJwtToken(authentication);
         assertNotNull(token);
         assertDoesNotThrow(() -> jwtUtils.validateJwtToken(token));
-        assertEquals("testuser", jwtUtils.getUserNameFromJwtToken(token));
+        assertEquals(adminUsername, jwtUtils.getUserNameFromJwtToken(token));
     }
 
     @Test
@@ -84,7 +76,7 @@ public class JwtUtilsIntegrationTest {
 
     @Test
     public void testValidateJwtTokenWithExpiredToken() {
-        User userDetails = (User) UserService.loadUserByUsername("testuser");
+        User userDetails = (User) UserService.loadUserByUsername(adminUsername);
         SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
         String expiredToken = Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -99,12 +91,12 @@ public class JwtUtilsIntegrationTest {
 
     @Test
     public void testGetUserNameFromJwtToken() {
-        User userDetails = (User) UserService.loadUserByUsername("testuser");
+        User userDetails = (User) UserService.loadUserByUsername(adminUsername);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         String token = jwtUtils.generateJwtToken(authentication);
         String userName = jwtUtils.getUserNameFromJwtToken(token);
-        assertEquals("testuser", userName);
+        assertEquals(adminUsername, userName);
     }
 
 

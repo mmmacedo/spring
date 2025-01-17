@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails {
+public class User extends Auditable<UUID> implements UserDetails {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -56,6 +56,11 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -82,5 +87,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean isAdmin() {
+        return roles.stream().anyMatch(role -> role.getName().equals(ERole.ROLE_ADMIN));
     }
 }

@@ -17,6 +17,30 @@
             <column name="password" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+
+            <!-- Campos da auditoria -->
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_on" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_by" type="uuid">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_on" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_by" type="uuid">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <!-- Campos da auditoria -->
         </createTable>
     </changeSet>
 
@@ -29,6 +53,30 @@
             <column name="name" type="varchar(50)">
                 <constraints unique="true" nullable="false"/>
             </column>
+
+            <!-- Campos da auditoria -->
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="uuid">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_on" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_by" type="uuid">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_on" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_by" type="uuid">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <!-- Campos da auditoria -->
         </createTable>
     </changeSet>
 
@@ -59,7 +107,9 @@
         <insert tableName="manager_user">
             <column name="id" valueComputed="gen_random_uuid()"/>
             <column name="username" value="root"/>
-            <column name="password" value="2cd93325-0d1f-4c82-9793-2b349ad5d8be"/>
+            <column name="password" value="$2a$12$TtitqMlAHvqQbp0qIndT6OLykqbzgILWWXEjRQP/RkyQPqsfv1p/W"/>
+            <column name="created_on" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_deleted" valueComputed="FALSE"/>
         </insert>
     </changeSet>
 
@@ -67,11 +117,27 @@
     <changeSet id="5" author="admin">
         <insert tableName="role">
             <column name="id" valueComputed="gen_random_uuid()"/>
-            <column name="name" value="anonymous"/>
+            <column name="name" value="ROLE_ANONYMOUS"/>
+            <column name="created_on" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_deleted" valueComputed="FALSE"/>
         </insert>
         <insert tableName="role">
             <column name="id" valueComputed="gen_random_uuid()"/>
-            <column name="name" value="admin"/>
+            <column name="name" value="ROLE_USER"/>
+            <column name="created_on" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_deleted" valueComputed="FALSE"/>
+        </insert>
+        <insert tableName="role">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ROLE_MODERATOR"/>
+            <column name="created_on" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_deleted" valueComputed="FALSE"/>
+        </insert>
+        <insert tableName="role">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ROLE_ADMIN"/>
+            <column name="created_on" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_deleted" valueComputed="FALSE"/>
         </insert>
     </changeSet>
 
@@ -79,7 +145,7 @@
     <changeSet id="6" author="admin">
         <insert tableName="user_roles">
             <column name="user_id" valueComputed="(SELECT id FROM manager_user WHERE username = 'root')"/>
-            <column name="role_id" valueComputed="(SELECT id FROM role WHERE name = 'admin')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM role WHERE name = 'ROLE_ADMIN')"/>
         </insert>
     </changeSet>
 

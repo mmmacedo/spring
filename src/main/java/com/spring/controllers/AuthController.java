@@ -7,6 +7,7 @@ import com.spring.services.RegisterUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,15 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    public ResponseEntity<?> registerNewUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        return registerUserService.registerNewUser(
+                signUpRequest.getUsername(),
+                signUpRequest.getPassword());
+    }
+
+    @PostMapping("/newuser")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         return registerUserService.registerNewUser(
                 signUpRequest.getUsername(),

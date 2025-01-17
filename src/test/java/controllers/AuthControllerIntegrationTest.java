@@ -1,12 +1,12 @@
 package controllers;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.MainApplication;
 import com.spring.payload.request.LoginRequest;
 import com.spring.payload.request.SignupRequest;
 import com.spring.payload.response.JwtResponse;
 import com.spring.payload.response.MessageResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-public class AuthControllerIntegrationTest {
+class AuthControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,6 +40,21 @@ public class AuthControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private MvcResult loggerdUser;
+
+    @BeforeEach
+    public void setup() throws Exception {
+        LoginRequest loginRequest = LoginRequest.builder()
+                .username("root")
+                .password("root")
+                .build();
+
+        loggerdUser = mockMvc.perform(post("/api/auth/signin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
 
     @Test
     public void testRegisterUser() throws Exception {
@@ -48,8 +63,12 @@ public class AuthControllerIntegrationTest {
                 .password("testpass")
                 .build();
 
+        String responseString = loggerdUser.getResponse().getContentAsString();
+        String token = objectMapper.readTree(responseString).get("token").asText();
+
         MvcResult result = mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(signupRequest)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -60,6 +79,7 @@ public class AuthControllerIntegrationTest {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsername("testuser");
         loginRequest.setPassword("testpass");
+
         MvcResult loginResult = mockMvc.perform(post("/api/auth/signin")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -79,8 +99,12 @@ public class AuthControllerIntegrationTest {
                 .role(Set.of("admin", "mod"))
                 .build();
 
-        MvcResult result = mockMvc.perform(post("/api/auth/signup")
+        String responseString = loggerdUser.getResponse().getContentAsString();
+        String token = objectMapper.readTree(responseString).get("token").asText();
+
+        MvcResult result = mockMvc.perform(post("/api/auth/newuser")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(signupRequest)))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -88,10 +112,10 @@ public class AuthControllerIntegrationTest {
         MessageResponse messageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), MessageResponse.class);
         assertEquals("User registered successfully!", messageResponse.getMessage());
 
-
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsername("testuser2");
         loginRequest.setPassword("testpass2");
+
         MvcResult loginResult = mockMvc.perform(post("/api/auth/signin")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -104,36 +128,16 @@ public class AuthControllerIntegrationTest {
         List<String> expectedRoles = List.of("ROLE_ADMIN", "ROLE_MODERATOR");
         List<String> actualRoles = new ArrayList<>(jwtResponse.getRoles());
         actualRoles.sort(String::compareTo);
+
         assertEquals(expectedRoles, actualRoles);
     }
 
     @Test
     public void testAuthenticateUser() throws Exception {
-        SignupRequest signupRequest = SignupRequest.builder()
-                .username("testuser3")
-                .password("testpass3")
-                .role(Set.of("user"))
-                .build();
-
-        mockMvc.perform(post("/api/auth/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(signupRequest)))
-                .andExpect(status().isOk());
-
-
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("testuser3");
-        loginRequest.setPassword("testpass3");
-        MvcResult loginResult = mockMvc.perform(post("/api/auth/signin")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        JwtResponse jwtResponse = objectMapper.readValue(loginResult.getResponse().getContentAsString(), JwtResponse.class);
+        JwtResponse jwtResponse = objectMapper.readValue(loggerdUser.getResponse().getContentAsString(), JwtResponse.class);
         assertNotNull(jwtResponse.getAccessToken());
-        assertEquals("testuser3", jwtResponse.getUsername());
-        assertEquals(List.of("ROLE_USER"), jwtResponse.getRoles());
+        assertEquals("root", jwtResponse.getUsername());
+        assertEquals(List.of("ROLE_ADMIN"), jwtResponse.getRoles());
     }
 
 
@@ -145,14 +149,18 @@ public class AuthControllerIntegrationTest {
                 .role(Set.of("user"))
                 .build();
 
+        String responseString = loggerdUser.getResponse().getContentAsString();
+        String token = objectMapper.readTree(responseString).get("token").asText();
 
         mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(signupRequest)))
                 .andExpect(status().isOk());
 
         MvcResult result = mockMvc.perform(post("/api/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(signupRequest)))
                 .andExpect(status().isBadRequest())
                 .andReturn();

@@ -3,6 +3,7 @@ package com.spring.util;
 import com.spring.entities.ERole;
 import com.spring.entities.Role;
 import com.spring.repositories.RoleRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -19,24 +20,29 @@ public class RoleResolver {
     public RoleResolver(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
         this.roleMap = new HashMap<>();
-        this.roleMap.put("admin", ERole.ROLE_ADMIN);
         this.roleMap.put("anom", ERole.ROLE_ANONYMOUS);
-        this.roleMap.put("mod", ERole.ROLE_MODERATOR);
         this.roleMap.put("user", ERole.ROLE_USER);
+        this.roleMap.put("mod", ERole.ROLE_MODERATOR);
+        this.roleMap.put("admin", ERole.ROLE_ADMIN);
     }
 
     public Set<Role> resolveRoles(Set<String> strRoles) {
         Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null || strRoles.isEmpty()) {
+        if (CollectionUtils.isEmpty(strRoles)) {
             addDefaultUserRole(roles);
             return roles;
         }
 
         strRoles.forEach(strRole -> {
-            ERole eRole = roleMap.getOrDefault(strRole, ERole.ROLE_USER);
+            ERole eRole = roleMap.entrySet().stream()
+                    .filter(entry -> entry.getKey().equalsIgnoreCase(strRole))
+                    .map(Map.Entry::getValue)
+                    .findFirst()
+                    .orElse(ERole.ROLE_USER);
+
             Role role = roleRepository.findByName(eRole)
-                    .orElseThrow(() -> new RuntimeException("Error: Role " + eRole + " not found."));
+                    .orElse(roleRepository.findByName(ERole.ROLE_USER).get());
             roles.add(role);
         });
 
