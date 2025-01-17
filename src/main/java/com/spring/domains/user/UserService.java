@@ -1,6 +1,5 @@
-package com.spring.services;
+package com.spring.domains.user;
 
-import com.spring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

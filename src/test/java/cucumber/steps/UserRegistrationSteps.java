@@ -2,10 +2,10 @@ package cucumber.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.MainApplication;
-import com.spring.entities.User;
+import com.spring.domains.user.User;
 import com.spring.payload.request.LoginRequest;
 import com.spring.payload.request.SignupRequest;
-import com.spring.repositories.UserRepository;
+import com.spring.domains.user.UserRepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -78,7 +78,7 @@ public class UserRegistrationSteps {
 
     @When("Eu submeto o formulário de cadastro")
     public void euSubmetoOFormularioDeCadastro() throws Exception {
-        MockHttpServletRequestBuilder ra = post("/api/auth/signup")
+        MockHttpServletRequestBuilder ra = post("/api/user/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(signupRequest));
 
@@ -98,7 +98,7 @@ public class UserRegistrationSteps {
         String responseString = loggerdUser.getResponse().getContentAsString();
         String token = objectMapper.readTree(responseString).get("token").asText();
 
-        createdUser = mockMvc.perform(post("/api/auth/newuser")
+        createdUser = mockMvc.perform(post("/api/user/newuser")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(signupRequest)))

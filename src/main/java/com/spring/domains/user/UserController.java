@@ -1,9 +1,7 @@
-package com.spring.controllers;
+package com.spring.domains.user;
 
-import com.spring.payload.request.LoginRequest;
 import com.spring.payload.request.SignupRequest;
-import com.spring.services.AuthenticateUserService;
-import com.spring.services.RegisterUserService;
+import com.spring.core.services.RegisterUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,19 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController {
+@RequestMapping("/api/user")
+public class UserController {
 
     @Autowired
     private RegisterUserService registerUserService;
-
-    @Autowired
-    private AuthenticateUserService authenticateUserService;
-
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        return authenticateUserService.authenticateUser(loginRequest.getUsername(), loginRequest.getPassword());
-    }
 
     @PostMapping("/signup")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")

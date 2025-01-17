@@ -1,9 +1,9 @@
-package com.spring.repositories;
+package com.spring.core;
 
 import java.util.Optional;
 
-import com.spring.entities.ERole;
-import com.spring.entities.Role;
+import com.spring.core.entities.ERole;
+import com.spring.core.entities.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

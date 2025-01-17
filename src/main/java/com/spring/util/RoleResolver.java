@@ -1,8 +1,8 @@
 package com.spring.util;
 
-import com.spring.entities.ERole;
-import com.spring.entities.Role;
-import com.spring.repositories.RoleRepository;
+import com.spring.core.RoleRepository;
+import com.spring.core.entities.ERole;
+import com.spring.core.entities.Role;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +42,8 @@ public class RoleResolver {
                     .orElse(ERole.ROLE_USER);
 
             Role role = roleRepository.findByName(eRole)
-                    .orElse(roleRepository.findByName(ERole.ROLE_USER).get());
+                    .orElseGet(() -> roleRepository.findByName(ERole.ROLE_USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Default user role not found.")));
             roles.add(role);
         });
 

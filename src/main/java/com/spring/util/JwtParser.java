@@ -5,15 +5,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
+
 @Component
 public class JwtParser {
 
     public String parseJwt(HttpServletRequest request) {
-        String headerAuth = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
-        }
-        throw new JwtParseFailException("Invalid or missing JWT token in Authorization header");
+        return Optional.ofNullable(request.getHeader("Authorization"))
+                .filter(StringUtils::hasText)
+                .filter(header -> header.startsWith("Bearer "))
+                .map(header -> header.substring(7).trim())
+                .filter(token -> !token.isEmpty())
+                .orElseThrow(() -> new JwtParseFailException("Invalid or missing JWT token in Authorization header"));
     }
+
 }

@@ -1,8 +1,8 @@
-package com.spring.config;
+package com.spring.core;
 
 import com.spring.security.AuthEntryPointJwt;
 import com.spring.security.AuthTokenFilter;
-import com.spring.services.UserService;
+import com.spring.domains.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

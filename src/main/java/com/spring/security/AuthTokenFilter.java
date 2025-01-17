@@ -1,6 +1,6 @@
 package com.spring.security;
 
-import com.spring.services.UserService;
+import com.spring.domains.user.UserService;
 import com.spring.util.JwtParser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,11 +1,11 @@
 package security;
 
 import com.spring.MainApplication;
-import com.spring.entities.User;
+import com.spring.domains.user.User;
 import com.spring.exceptions.JwtValidationException;
 import com.spring.security.JwtUtils;
-import com.spring.services.RegisterUserService;
-import com.spring.services.UserService;
+import com.spring.core.services.RegisterUserService;
+import com.spring.domains.user.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-public class JwtUtilsIntegrationTest {
+public class JwtUtilsIT {
 
     @Autowired
     private JwtUtils jwtUtils;

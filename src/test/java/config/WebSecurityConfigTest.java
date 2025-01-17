@@ -1,8 +1,8 @@
 package config;
 
 import com.spring.MainApplication;
-import com.spring.config.WebSecurityConfig;
-import com.spring.entities.User;
+import com.spring.core.WebSecurityConfig;
+import com.spring.domains.user.User;
 import com.spring.security.AuthTokenFilter;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-class AuthControllerIntegrationTest {
+class UserControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -66,7 +66,7 @@ class AuthControllerIntegrationTest {
         String responseString = loggerdUser.getResponse().getContentAsString();
         String token = objectMapper.readTree(responseString).get("token").asText();
 
-        MvcResult result = mockMvc.perform(post("/api/auth/signup")
+        MvcResult result = mockMvc.perform(post("/api/user/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(signupRequest)))
@@ -102,7 +102,7 @@ class AuthControllerIntegrationTest {
         String responseString = loggerdUser.getResponse().getContentAsString();
         String token = objectMapper.readTree(responseString).get("token").asText();
 
-        MvcResult result = mockMvc.perform(post("/api/auth/newuser")
+        MvcResult result = mockMvc.perform(post("/api/user/newuser")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(signupRequest)))
@@ -152,13 +152,13 @@ class AuthControllerIntegrationTest {
         String responseString = loggerdUser.getResponse().getContentAsString();
         String token = objectMapper.readTree(responseString).get("token").asText();
 
-        mockMvc.perform(post("/api/auth/signup")
+        mockMvc.perform(post("/api/user/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(signupRequest)))
                 .andExpect(status().isOk());
 
-        MvcResult result = mockMvc.perform(post("/api/auth/signup")
+        MvcResult result = mockMvc.perform(post("/api/user/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + token)
                         .content(objectMapper.writeValueAsString(signupRequest)))

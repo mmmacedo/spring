@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Transactional
 @SpringBootTest(classes = MainApplication.class)
 @AutoConfigureMockMvc
-public class AuthEntryPointJwtIntegrationTest {
+public class AuthEntryPointJwtIT {
 
     @Autowired
     private MockMvc mockMvc;

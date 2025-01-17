@@ -1,6 +1,5 @@
-package com.spring.repositories;
+package com.spring.domains.user;
 
-import com.spring.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

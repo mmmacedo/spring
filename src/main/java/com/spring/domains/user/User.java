@@ -1,5 +1,8 @@
-package com.spring.entities;
+package com.spring.domains.user;
 
+import com.spring.core.entities.Auditable;
+import com.spring.core.entities.ERole;
+import com.spring.core.entities.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +16,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,6 +35,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class User extends Auditable<UUID> implements UserDetails {
 
     @Serial
@@ -90,6 +95,7 @@ public class User extends Auditable<UUID> implements UserDetails {
     }
 
     public boolean isAdmin() {
-        return roles.stream().anyMatch(role -> role.getName().equals(ERole.ROLE_ADMIN));
+        return roles.stream()
+                .anyMatch(role -> role.getName().equals(ERole.ROLE_ADMIN));
     }
 }

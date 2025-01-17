@@ -1,5 +1,6 @@
-package com.spring.entities;
+package com.spring.core.entities;
 
+import com.spring.domains.user.User;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;

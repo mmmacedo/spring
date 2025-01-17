@@ -1,9 +1,9 @@
-package com.spring.services;
+package com.spring.core.services;
 
-import com.spring.entities.Role;
-import com.spring.entities.User;
+import com.spring.core.entities.Role;
+import com.spring.domains.user.User;
 import com.spring.payload.response.MessageResponse;
-import com.spring.repositories.UserRepository;
+import com.spring.domains.user.UserRepository;
 import com.spring.util.RoleResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

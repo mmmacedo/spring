@@ -1,6 +1,6 @@
 package com.spring.payload.request;
 
-import com.spring.entities.ERole;
+import com.spring.core.entities.ERole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

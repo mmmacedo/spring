@@ -1,4 +1,4 @@
-package com.spring.entities;
+package com.spring.core.entities;
 
 public enum ERole {
   ROLE_ANONYMOUS,
