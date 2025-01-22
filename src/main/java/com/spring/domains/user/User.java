@@ -1,5 +1,6 @@
 package com.spring.domains.user;
 
+import com.spring.core.entities.Audit;
 import com.spring.core.entities.Auditable;
 import com.spring.core.entities.ERole;
 import com.spring.core.entities.Role;
@@ -11,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -92,6 +94,10 @@ public class User extends Auditable<UUID> implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Audit getAudit() {
+        return this.audit;
     }
 
     public boolean isAdmin() {

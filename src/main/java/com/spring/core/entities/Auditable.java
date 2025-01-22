@@ -15,7 +15,7 @@ import java.util.UUID;
 public abstract class Auditable<U> {
 
     @Embedded
-    private Audit audit = new Audit();
+    protected Audit audit = new Audit();
 
     @PrePersist
     protected void onCreate() {
@@ -27,6 +27,17 @@ public abstract class Auditable<U> {
     protected void onUpdate() {
         audit.setUpdatedOn(LocalDateTime.now());
         audit.setUpdatedBy(getCurrentUserId());
+    }
+
+    protected void updateDeletedFields() {
+        audit.setDeletedOn(LocalDateTime.now());
+        audit.setDeletedBy(getCurrentUserId());
+    }
+
+    public void delete() {
+        audit.setDeleted(true);
+        audit.setDeletedOn(LocalDateTime.now());
+        audit.setDeletedBy(getCurrentUserId());
     }
 
     private UUID getCurrentUserId() {

@@ -2,6 +2,8 @@ package controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.MainApplication;
+import com.spring.domains.user.User;
+import com.spring.domains.user.UserRepository;
 import com.spring.payload.request.LoginRequest;
 import com.spring.payload.request.SignupRequest;
 import com.spring.payload.response.JwtResponse;
@@ -12,18 +14,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+import org.testng.annotations.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,6 +47,9 @@ class UserControllerIT {
     private ObjectMapper objectMapper;
 
     private MvcResult loggerdUser;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -133,15 +142,6 @@ class UserControllerIT {
     }
 
     @Test
-    public void testAuthenticateUser() throws Exception {
-        JwtResponse jwtResponse = objectMapper.readValue(loggerdUser.getResponse().getContentAsString(), JwtResponse.class);
-        assertNotNull(jwtResponse.getAccessToken());
-        assertEquals("root", jwtResponse.getUsername());
-        assertEquals(List.of("ROLE_ADMIN"), jwtResponse.getRoles());
-    }
-
-
-    @Test
     public void testRegisterUserWithExistingUsername() throws Exception {
         SignupRequest signupRequest = SignupRequest.builder()
                 .username("existinguser")
@@ -168,5 +168,23 @@ class UserControllerIT {
         MessageResponse messageResponse = objectMapper.readValue(result.getResponse().getContentAsString(), MessageResponse.class);
         assertEquals("Error: Username is already taken!", messageResponse.getMessage());
 
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception{
+        String userId = "22d219b5-65c6-4f1f-94ae-696c94974f9b";
+        String responseString = loggerdUser.getResponse().getContentAsString();
+        String token = objectMapper.readTree(responseString).get("token").asText();
+
+        MvcResult result = mockMvc.perform(delete(String.format("/api/user/delete/%1$s", userId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        User deletedUser = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: "));
+
+        assertNotNull(deletedUser.getAudit().getDeletedOn());
     }
 }

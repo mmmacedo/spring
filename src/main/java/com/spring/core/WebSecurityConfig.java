@@ -1,8 +1,8 @@
 package com.spring.core;
 
+import com.spring.domains.user.UserService;
 import com.spring.security.AuthEntryPointJwt;
 import com.spring.security.AuthTokenFilter;
-import com.spring.domains.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,8 +56,9 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth
+                                // login
                                 .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/test/**").permitAll()
+                                // geral
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
