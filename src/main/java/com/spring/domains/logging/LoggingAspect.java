@@ -72,7 +72,7 @@ public class LoggingAspect {
 
             // Salva o log na tabela correta
             String tableName = logAnnotation.table();
-            LogPersistenceService persistenceService = logRepositoryFactory.getLogPersistenceService(tableName);
+            LogPersistenceService persistenceService = logRepositoryFactory.getLogPersistenceService();
             persistenceService.save(tableName, logEntry);
         }
         return response;

@@ -2,18 +2,17 @@ package com.spring.domains.logging;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.persistence.TransactionRequiredException;
 import jakarta.transaction.Transactional;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @Setter
 public class LogPersistenceServiceImpl implements LogPersistenceService {
-
-    @Autowired
-    private LogRepository logRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -36,8 +35,16 @@ public class LogPersistenceServiceImpl implements LogPersistenceService {
                     .setParameter("responsePayload", logEntry.getResponsePayload())
                     .setParameter("executionTimeMs", logEntry.getExecutionTimeMs())
                     .executeUpdate();
+
         } catch (TransactionRequiredException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    @Transactional
+    public List<LogEntity> findAllFromTable(String tableName) {
+        String sql = "SELECT * FROM " + tableName;
+        Query query = entityManager.createNativeQuery(sql, LogEntity.class);
+        return query.getResultList();
     }
 }

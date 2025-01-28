@@ -14,3 +14,17 @@ INSERT INTO manager_user(id, username, password, created_on, is_deleted) VALUES(
 -- user_roles
 INSERT INTO user_roles(user_id, role_id) VALUES ('c9f00788-9b3a-4ca6-8114-ed240566303e','b536c6a7-d848-4126-bf33-0029112b5d44');
 INSERT INTO user_roles(user_id, role_id) VALUES ('22d219b5-65c6-4f1f-94ae-696c94974f9b', '54465407-21a5-4514-980d-32f95b8194b2');
+
+
+CREATE TABLE logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    request_time TIMESTAMP NOT NULL,
+    request_payload TEXT,
+    client_ip VARCHAR(45),
+    endpoint VARCHAR(255),
+    http_method VARCHAR(10),
+    status_code INT NOT NULL,
+    response_time TIMESTAMP NOT NULL,
+    response_payload TEXT,
+    execution_time_ms BIGINT NOT NULL
+);
