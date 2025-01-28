@@ -1,26 +1,28 @@
 package com.spring.domains.user;
 
-import com.spring.core.entities.Audit;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.spring.util.RoleResolver;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
+    private final RoleResolver roleResolver;
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    public UserService(UserRepository userRepository, PasswordEncoder encoder, RoleResolver roleResolver) {
+        this.userRepository = userRepository;
+        this.encoder = encoder;
+        this.roleResolver = roleResolver;
+    }
 
     @Override
     @Transactional
@@ -36,4 +38,24 @@ public class UserService implements UserDetailsService {
         return user.getAudit().isDeleted();
     }
 
+    public boolean changePassword(UUID userId, String oldPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: "));
+
+        if (!encoder.matches(oldPassword, user.getPassword())) {
+            return false;
+        }
+
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
+        return true;
+
+    }
+
+    public boolean updateRoles(UUID userId, Set<String> roles) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: "));
+        user.setRoles(roleResolver.resolveRoles(roles));
+        return true;
+    }
 }

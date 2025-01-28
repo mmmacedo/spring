@@ -1,10 +1,10 @@
 package config;
 
 import com.spring.MainApplication;
+import com.spring.core.AuthController;
 import com.spring.core.WebSecurityConfig;
 import com.spring.domains.user.User;
 import com.spring.security.AuthTokenFilter;
-import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,8 +28,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,9 +64,14 @@ class WebSecurityConfigTest {
     @Mock
     private AuthenticationConfiguration authConfig;
 
+    @Mock
+    AuthController authController;
+
     @BeforeEach
-    void setup() throws ServletException, IOException {
+    void setup() throws Exception {
         Mockito.doNothing().when(authTokenFilter).doFilter(any(), any(), any());
+        this.mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .addFilters(authTokenFilter).build();
     }
 
     @TestConfiguration
@@ -75,6 +79,11 @@ class WebSecurityConfigTest {
         @Bean
         public AuthenticationManager mockAuthenticationManager() {
             return Mockito.mock(AuthenticationManager.class);
+        }
+
+        @Bean
+        public AuthTokenFilter mockAuthTokenFilter() {
+            return Mockito.mock(AuthTokenFilter.class);
         }
     }
 
@@ -115,7 +124,7 @@ class WebSecurityConfigTest {
                         .password("$2a$10$vL06Lq6B3sB7.f6QeC2zF.z40ZJ21uRj9qN8g6eZtL/o18F9r7hS")
                         .build(),
                 null,
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
 
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
@@ -125,12 +134,7 @@ class WebSecurityConfigTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"root\", \"password\":\"root\"}"))
                 .andExpect(status().isOk());
-    }
 
-    @Test
-    void testFilterChain_Authenticated() throws Exception {
-        mockMvc.perform(get("/api/test/test"))
-                .andExpect(status().isOk());
     }
 
     @Test

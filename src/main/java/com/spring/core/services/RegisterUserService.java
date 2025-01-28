@@ -2,10 +2,9 @@ package com.spring.core.services;
 
 import com.spring.core.entities.Role;
 import com.spring.domains.user.User;
-import com.spring.payload.response.MessageResponse;
 import com.spring.domains.user.UserRepository;
+import com.spring.payload.response.MessageResponse;
 import com.spring.util.RoleResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,14 +15,17 @@ import java.util.UUID;
 @Service
 public class RegisterUserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleResolver roleResolver;
+    private final RoleResolver roleResolver;
 
-    @Autowired
-    PasswordEncoder encoder;
+    private final PasswordEncoder encoder;
+
+    public RegisterUserService(UserRepository userRepository, RoleResolver roleResolver, PasswordEncoder encoder) {
+        this.userRepository = userRepository;
+        this.roleResolver = roleResolver;
+        this.encoder = encoder;
+    }
 
     public ResponseEntity<?> registerNewUser(String username, String password) {
         return registerNewUser(username, password, Set.of("ROLE_USER"));

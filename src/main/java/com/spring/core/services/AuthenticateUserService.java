@@ -4,7 +4,6 @@ import com.spring.domains.user.User;
 import com.spring.payload.response.JwtResponse;
 import com.spring.security.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,16 +18,13 @@ import java.util.stream.Collectors;
 @Service
 public class AuthenticateUserService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
-    public void invalidateToken(HttpServletRequest request) {
-        String token = jwtUtils.parseJwt(request);
-        //deixamos à cargo do redis :)
-        SecurityContextHolder.clearContext();
+    public AuthenticateUserService(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
     }
 
     public ResponseEntity<JwtResponse> authenticateUser(String username, String password) {

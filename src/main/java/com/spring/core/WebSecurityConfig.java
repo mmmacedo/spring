@@ -6,6 +6,7 @@ import com.spring.security.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -21,14 +22,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-    @Autowired
-    private UserService userDetailsService;
+    private final UserService userDetailsService;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final AuthEntryPointJwt unauthorizedHandler;
 
-    @Autowired
-    private AuthTokenFilter authenticationJwtTokenFilter;
+    private final AuthTokenFilter authenticationJwtTokenFilter;
+
+    public WebSecurityConfig(@Lazy UserService userDetailsService,
+                             @Lazy AuthEntryPointJwt unauthorizedHandler,
+                             @Lazy AuthTokenFilter authenticationJwtTokenFilter) {
+        this.userDetailsService = userDetailsService;
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.authenticationJwtTokenFilter = authenticationJwtTokenFilter;
+    }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {

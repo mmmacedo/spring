@@ -1,7 +1,9 @@
 package com.spring.domains.user;
 
 import com.spring.core.services.RegisterUserService;
+import com.spring.payload.request.ChangePasswordRequest;
 import com.spring.payload.request.SignupRequest;
+import com.spring.payload.request.UpdateRolesRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,24 +60,24 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
     }
 
-//    @PutMapping("/change-password/{userId}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == authentication.principal.id")
-//    public ResponseEntity<?> changePassword(@PathVariable Long userId, @RequestBody ChangePasswordRequest changePasswordRequest) {
-//        boolean updated = registerUserService.changePassword(userId, changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());
-//        if (updated) {
-//            return ResponseEntity.ok("Senha alterada com sucesso.");
-//        }
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao alterar a senha.");
-//    }
-//
-//    @PutMapping("/change-roles/{userId}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    public ResponseEntity<?> changeRoles(@PathVariable Long userId, @RequestBody UpdateRolesRequest updateRolesRequest) {
-//        boolean updated = registerUserService.updateRoles(userId, updateRolesRequest.getRoles());
-//        if (updated) {
-//            return ResponseEntity.ok("Funções do usuário alteradas com sucesso.");
-//        }
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao alterar as funções.");
-//    }
+    @PutMapping("/change-password/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #userId == authentication.principal.id")
+    public ResponseEntity<?> changePassword(@PathVariable UUID userId, @RequestBody ChangePasswordRequest changePasswordRequest) {
+        boolean updated = userService.changePassword(userId, changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());
+        if (updated) {
+            return ResponseEntity.ok("Senha alterada com sucesso.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao alterar a senha.");
+    }
+
+    @PutMapping("/change-roles/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> changeRoles(@PathVariable UUID userId, @RequestBody UpdateRolesRequest updateRolesRequest) {
+        boolean updated = userService.updateRoles(userId, updateRolesRequest.getRoles());
+        if (updated) {
+            return ResponseEntity.ok("Roles do usuário alteradas com sucesso.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Falha ao alterar as funções.");
+    }
 
 }
